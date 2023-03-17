@@ -6,6 +6,8 @@ TagManager:
   tags:
   - Block
   - Barn
+  - Stack
+  - GardenBed
   layers:
   - Default
   - TransparentFX

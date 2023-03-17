@@ -17,21 +17,16 @@ public class Player : MonoBehaviour
     private Animator _animator;
     private CharacterController _characterController;
 
-    // stack
-    [SerializeField] private TMP_Text _coinsText;
-    private int _coins;
+    [SerializeField] private Stack _stack;
 
-    [SerializeField] private TMP_Text _blocksText;
-    [SerializeField] private Scrollbar _scrollbar;
-    [SerializeField] private int _maxBlockCount = 40;
-    private List<Block> _blockStack;
+    [SerializeField] private Transform _scythe;
 
     void Start()
     {
         _characterController = GetComponent<CharacterController>();
         _animator = GetComponent<Animator>();
 
-        _blockStack = new List<Block>();
+        _scythe.gameObject.SetActive(false);
 
         GravityHandling();
     }
@@ -81,28 +76,34 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // add try get component
         if (other.gameObject.tag == "Block")
         {
-            if (_blockStack.Count < _maxBlockCount)
-            {
-                other.gameObject.SetActive(false);
-                _blockStack.Add(other.GetComponent<Block>());
-                _blocksText.text = _blockStack.Count + "/" + _maxBlockCount;
-                _scrollbar.size = (float) _blockStack.Count / _maxBlockCount;
-            }
+            var block = other.GetComponent<Block>();
+            _stack.AddBlock(block);
         }
 
         if (other.gameObject.tag == "Barn")
         {
-            foreach (var block in _blockStack)
-            {
-                _coins += block.Cost;
-            }
-            _coinsText.text = _coins.ToString();
+            _stack.ClearStack(other.transform);
+        }
+    }
 
-            _blockStack.Clear();
-            _blocksText.text = 0 + "/" + _maxBlockCount;
-            _scrollbar.size = 0;
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "GardenBed")
+        {
+            _scythe.gameObject.SetActive(true);
+            _animator.SetBool("IsMowing", true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "GardenBed")
+        {
+            _scythe.gameObject.SetActive(false);
+            _animator.SetBool("IsMowing", false);
         }
     }
 }
