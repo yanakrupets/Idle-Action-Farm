@@ -18,8 +18,9 @@ public class Player : MonoBehaviour
     private CharacterController _characterController;
 
     [SerializeField] private Stack _stack;
-
     [SerializeField] private Transform _scythe;
+
+    public bool IsShippingToBarn { get; private set; }
 
     void Start()
     {
@@ -35,13 +36,18 @@ public class Player : MonoBehaviour
     {
         // gravity to another class
         GravityHandling();
+
+        IsShippingToBarn = _stack.IsBlocksMoving;
     }
 
     public void Move(Vector3 direction)
     {
-        direction = direction * _moveSpeed;
-        direction.y = _currentGravity;
-        _characterController.Move(direction * Time.deltaTime);
+        if (!IsShippingToBarn)
+        {
+            direction = direction * _moveSpeed;
+            direction.y = _currentGravity;
+            _characterController.Move(direction * Time.deltaTime);
+        }
     }
 
     public void Rotate(Vector3 direction)

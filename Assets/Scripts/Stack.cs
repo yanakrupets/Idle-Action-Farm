@@ -5,13 +5,21 @@ using UnityEngine;
 
 public class Stack : MonoBehaviour
 {
-    private int _rows = 3;
-    private int _columns = 3;
-    private float _height = 0;
-
     [SerializeField] private int _maxBlockCount = 40;
+
+    [SerializeField] private float spaceBetweenX = 0.01f;
+    [SerializeField] private float spaceBetweenZ = 0.06f;
+
+    [SerializeField] private float deltaX = 0.3f;
+    [SerializeField] private float deltaZ = 0.2f;
+    [SerializeField] private float deltaY = 0.18f;
+
+    [SerializeField] private float timeForMovingToBarn = 10f;
+
+    private float _height;
     private List<Block> _blocksInStack;
     private Dictionary<Vector3, bool> _slots;
+    public bool IsBlocksMoving { get; set; } = false;
 
     public int Coins { get; private set; }
 
@@ -19,6 +27,8 @@ public class Stack : MonoBehaviour
     {
         _blocksInStack = new List<Block>();
         _slots = GetSlotsForLevel(_height);
+
+        _height = 0;
     }
 
     public void AddBlock(Block block)
@@ -51,14 +61,32 @@ public class Stack : MonoBehaviour
         EventManager.TriggerEvent(GameEvent.ADD_MONEY, coins, _maxBlockCount);
         Coins += coins;
 
+        // корутинка для полета блоков
+        StartCoroutine(MoveBlocksToBarn(barn));
+
+        _height = 0;
+        _slots = GetSlotsForLevel(_height);
+    }
+
+    IEnumerator MoveBlocksToBarn(Transform barn)
+    {
+        IsBlocksMoving = true;
+        for (var i = _blocksInStack.Count - 1; i >= 0; i--)
+        {
+            _blocksInStack[i].MoveToBarn(barn);
+
+            yield return new WaitForSeconds(timeForMovingToBarn);
+        }
+
         _blocksInStack.Clear();
+        IsBlocksMoving = false;
     }
 
     private Vector3 GetFreePlace()
     {
         if (!_slots.Any(x => x.Value == true))
         {
-            _height += 0.16f;
+            _height += deltaY;
             _slots = GetSlotsForLevel(_height);
         }
 
@@ -70,23 +98,17 @@ public class Stack : MonoBehaviour
 
     private Dictionary<Vector3, bool> GetSlotsForLevel(float height)
     {
-        var delayX = 0.01f;
-        var delayZ = 0.04f;
-
-        var x = 0.3f;
-        var z = 0.2f;
-
         return new Dictionary<Vector3, bool>()
         {
-            { new Vector3(-x + delayX, height, z + delayZ), true },
-            { new Vector3(0f, height, z + delayZ), true },
-            { new Vector3(x + delayX, height, z + delayZ), true },
-            { new Vector3(-x + delayX, height, 0), true },
+            { new Vector3(-deltaX - spaceBetweenX, height, deltaZ + spaceBetweenZ), true },
+            { new Vector3(0f, height, deltaZ + spaceBetweenZ), true },
+            { new Vector3(deltaX + spaceBetweenX, height, deltaZ + spaceBetweenZ), true },
+            { new Vector3(-deltaX - spaceBetweenX, height, 0), true },
             { new Vector3(0f, height, 0), false },
-            { new Vector3(x + delayX, height, 0), true },
-            { new Vector3(-x + delayX, height, -z - delayZ), true },
-            { new Vector3(0f, height, -z - delayZ), true },
-            { new Vector3(x + delayX, height, -z - delayZ), true },
+            { new Vector3(deltaX + spaceBetweenX, height, 0), true },
+            { new Vector3(-deltaX - spaceBetweenX, height, -deltaZ - spaceBetweenZ), true },
+            { new Vector3(0f, height, -deltaZ - spaceBetweenZ), true },
+            { new Vector3(deltaX + spaceBetweenX, height, -deltaZ - spaceBetweenZ), true },
         };
     }
 }
