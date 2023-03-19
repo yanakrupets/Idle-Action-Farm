@@ -2032,6 +2032,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5415747467955595737, guid: 0abb805850a3b504a90bb0db21cf2777, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6531099296938815195, guid: 0abb805850a3b504a90bb0db21cf2777, type: 3}
       propertyPath: m_Name
       value: Wheat Garden Bed

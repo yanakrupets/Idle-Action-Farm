@@ -14,12 +14,24 @@ public abstract class Block : MonoBehaviour
     private Vector3 originalScale;
     private bool isInBarn = false;
 
+    private Transform _bedPart;
+
     private void Update()
     {
-        if (isInBarn && transform.localPosition == Vector3.zero) gameObject.SetActive(false);
+        if (isInBarn && transform.localPosition == Vector3.zero)
+        {
+            gameObject.SetActive(false);
+            Destroy(gameObject);
+        }
     }
 
-    // перегрузить метод MoveTo для barn и stack
+    public void ShowBlock()
+    {
+        gameObject.SetActive(true);
+
+        transform.DOLocalMove(Vector3.up, 1f);
+    }
+
     public void MoveToStack(Vector3 destination)
     {
         transform.DOScale(new Vector3(0.25f, 0.16f, 0.2f), 1f);
@@ -39,5 +51,10 @@ public abstract class Block : MonoBehaviour
         transform.DOLocalRotate(Vector3.zero, 1f);
 
         isAvailable = true;
+    }
+
+    public void InitParentBed(Transform parent)
+    {
+        _bedPart = parent;
     }
 }

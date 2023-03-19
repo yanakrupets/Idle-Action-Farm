@@ -47,11 +47,6 @@ public class Stack : MonoBehaviour
 
     public void ClearStack(Transform barn)
     {
-        // animation to barn
-        // for each block
-        // should be in block
-        // transform.SetParent(destination.transform);
-
         int coins = 0;
         foreach (var block in _blocksInStack)
         {
@@ -61,7 +56,6 @@ public class Stack : MonoBehaviour
         EventManager.TriggerEvent(GameEvent.ADD_MONEY, coins, _maxBlockCount);
         Coins += coins;
 
-        // корутинка для полета блоков
         StartCoroutine(MoveBlocksToBarn(barn));
 
         _height = 0;

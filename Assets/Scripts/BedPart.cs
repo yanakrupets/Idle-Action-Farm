@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using DG.Tweening;
 
 public class BedPart : MonoBehaviour
 {
@@ -9,6 +10,8 @@ public class BedPart : MonoBehaviour
 
     [Header("Stages of growth from min to max")]
     [SerializeField] private List<Transform> growthStages;
+
+    [SerializeField] private Block blockPrefab;
 
     private List<Transform> _partsOfFinalStage;
     private bool _isGrown;
@@ -27,6 +30,9 @@ public class BedPart : MonoBehaviour
         if (_partsOfFinalStage.Where(x => x.gameObject.activeSelf).Count() == 0 && _isGrown)
         {
             _isGrown = false;
+
+            CreateBlock();
+
             StartCoroutine(Grow());
         }
     }
@@ -38,6 +44,16 @@ public class BedPart : MonoBehaviour
         _isGrown = true;
 
         _partsOfFinalStage.ForEach(x => x.gameObject.SetActive(true));
+    }
+
+    private void CreateBlock()
+    {
+        var block = Instantiate(blockPrefab, transform.position, Quaternion.identity);
+        block.transform.SetParent(transform);
+        block.transform.DOLocalMove(Vector3.up, 0.5f);
+
+        Vector3 position = new Vector3(Random.Range(-1f, 1f), 0.1f, Random.Range(-1f, 1f));
+        block.transform.DOLocalMove(position, 0.5f);
     }
 
     private List<Transform> GetChildrenFromStage(Transform stage)
