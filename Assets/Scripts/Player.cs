@@ -52,7 +52,7 @@ public class Player : MonoBehaviour
 
     public void Rotate(Vector3 direction)
     {
-        if (_characterController.isGrounded)
+        if (_characterController.isGrounded && !IsShippingToBarn)
         {
             if (Vector3.Angle(transform.forward, direction) > 0)
             {
