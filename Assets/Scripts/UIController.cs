@@ -27,15 +27,15 @@ public class UIController : MonoBehaviour
     private void OnAddBlockToStack(int blockInStackCount, int maxBlockCount)
     {
         _blocksText.text = blockInStackCount + "/" + maxBlockCount;
-        _scrollbar.size = (float)blockInStackCount / maxBlockCount;
+        _scrollbar.size = (float) blockInStackCount / maxBlockCount;
     }
 
-    private void OnAddMoney(int coinsToAdd, int maxBlockCount)
+    private void OnAddMoney(int coinsToAdd, int blocksCount, int maxBlockCount, float time)
     {
         StartCoroutine(Coins(coinsToAdd));
+        // шото для полета монеток
 
-        _blocksText.text = 0 + "/" + maxBlockCount;
-        _scrollbar.size = 0;
+        StartCoroutine(BarToZero(maxBlockCount, time));
     }
 
     IEnumerator Coins(int coins)
@@ -46,6 +46,24 @@ public class UIController : MonoBehaviour
         {
             number++;
             _coinsText.text = number.ToString();
+
+            yield return new WaitForSeconds(time);
+        }
+    }
+
+    IEnumerator BarToZero(int maxBlockCount, float time)
+    {
+        var number = Convert.ToInt32(_blocksText.text
+            .Substring(0, _blocksText.text
+            .IndexOf("/")));
+        var delta = (float) 1 / maxBlockCount;
+        while (_scrollbar.size > 0)
+        {
+            number--;
+            if (number < 0) number = 0;
+            _blocksText.text = number + "/" + maxBlockCount;
+
+            _scrollbar.size -= delta;
 
             yield return new WaitForSeconds(time);
         }

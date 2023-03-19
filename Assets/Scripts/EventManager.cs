@@ -5,11 +5,13 @@ using UnityEngine.Events;
 
 [System.Serializable]
 public class TypedEvent : UnityEvent<int, int> { }
+public class TypedEvent2 : UnityEvent<int, int, int, float> { }
 
 public class EventManager : MonoBehaviour
 {
     private Dictionary<string, UnityEvent> eventDictionary;
     private Dictionary<string, TypedEvent> typedEventDictionary;
+    private Dictionary<string, TypedEvent2> typedEvent2Dictionary;
 
     private static EventManager eventManager;
 
@@ -41,6 +43,7 @@ public class EventManager : MonoBehaviour
         {
             eventDictionary = new Dictionary<string, UnityEvent>();
             typedEventDictionary = new Dictionary<string, TypedEvent>();
+            typedEvent2Dictionary = new Dictionary<string, TypedEvent2>();
         }
     }
 
@@ -109,6 +112,40 @@ public class EventManager : MonoBehaviour
         if (instance.typedEventDictionary.TryGetValue(eventName, out thisEvent))
         {
             thisEvent.Invoke(data1, data2);
+        }
+    }
+
+    public static void StartListening(string eventName, UnityAction<int, int, int, float> listener)
+    {
+        TypedEvent2 thisEvent = null;
+        if (instance.typedEvent2Dictionary.TryGetValue(eventName, out thisEvent))
+        {
+            thisEvent.AddListener(listener);
+        }
+        else
+        {
+            thisEvent = new TypedEvent2();
+            thisEvent.AddListener(listener);
+            instance.typedEvent2Dictionary.Add(eventName, thisEvent);
+        }
+    }
+
+    public static void StopListening(string eventName, UnityAction<int, int, int, float> listener)
+    {
+        if (eventManager == null) return;
+        TypedEvent2 thisEvent = null;
+        if (instance.typedEvent2Dictionary.TryGetValue(eventName, out thisEvent))
+        {
+            thisEvent.RemoveListener(listener);
+        }
+    }
+
+    public static void TriggerEvent(string eventName, int data1, int data2, int data3, float data4)
+    {
+        TypedEvent2 thisEvent = null;
+        if (instance.typedEvent2Dictionary.TryGetValue(eventName, out thisEvent))
+        {
+            thisEvent.Invoke(data1, data2, data3, data4);
         }
     }
 }
