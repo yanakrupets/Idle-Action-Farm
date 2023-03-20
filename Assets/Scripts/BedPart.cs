@@ -13,6 +13,8 @@ public class BedPart : MonoBehaviour
 
     [SerializeField] private Block blockPrefab;
 
+    [SerializeField] private ParticleSystem particle;
+
     private List<Transform> _partsOfFinalStage;
     private bool _isGrown;
     private float _timeForOnePartGrow;
@@ -74,8 +76,17 @@ public class BedPart : MonoBehaviour
             if (_partsOfFinalStage.Any(x => x.gameObject.activeSelf))
             {
                 _partsOfFinalStage.First(x => x.gameObject.activeSelf).gameObject.SetActive(false);
+                StartCoroutine(PlayParticle());
             }
         }
+    }
+
+    IEnumerator PlayParticle()
+    {
+        particle.gameObject.SetActive(true);
+        particle.Play();
+        yield return new WaitForSeconds(0.5f);
+        particle.Stop();
     }
 
     IEnumerator Grow()
