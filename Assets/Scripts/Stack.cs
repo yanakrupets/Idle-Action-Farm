@@ -7,18 +7,19 @@ public class Stack : MonoBehaviour
 {
     [SerializeField] private int _maxBlockCount = 40;
 
-    [SerializeField] private float spaceBetweenX = 0.01f;
-    [SerializeField] private float spaceBetweenZ = 0.06f;
+    [SerializeField] private float _spaceBetweenX = 0.01f;
+    [SerializeField] private float _spaceBetweenZ = 0.06f;
 
-    [SerializeField] private float deltaX = 0.3f;
-    [SerializeField] private float deltaZ = 0.2f;
-    [SerializeField] private float deltaY = 0.18f;
+    [SerializeField] private float _deltaX = 0.3f;
+    [SerializeField] private float _deltaZ = 0.2f;
+    [SerializeField] private float _deltaY = 0.18f;
 
-    [SerializeField] private float timeForMovingToBarn = 10f;
+    [SerializeField] private float _timeForMovingToBarn = 10f;
 
     private float _height;
     private List<Block> _blocksInStack;
     private Dictionary<Vector3, bool> _slots;
+
     public bool IsBlocksMoving { get; set; } = false;
 
     public int Coins { get; private set; }
@@ -53,10 +54,10 @@ public class Stack : MonoBehaviour
             coins += block.Cost;
         }
 
-        EventManager.TriggerEvent(GameEvent.ADD_MONEY, coins, _maxBlockCount, timeForMovingToBarn);
+        EventManager.TriggerEvent(GameEvent.ADD_MONEY, coins, _maxBlockCount, _timeForMovingToBarn);
         Coins += coins;
 
-        EventManager.TriggerEvent(GameEvent.START_PARTICLE, barn.position, _blocksInStack.Count, timeForMovingToBarn);
+        EventManager.TriggerEvent(GameEvent.START_PARTICLE, barn.position, _blocksInStack.Count, _timeForMovingToBarn);
 
         StartCoroutine(MoveBlocksToBarn(barn));
 
@@ -71,7 +72,7 @@ public class Stack : MonoBehaviour
         {
             _blocksInStack[i].MoveToBarn(barn);
 
-            yield return new WaitForSeconds(timeForMovingToBarn);
+            yield return new WaitForSeconds(_timeForMovingToBarn);
         }
 
         _blocksInStack.Clear();
@@ -82,7 +83,7 @@ public class Stack : MonoBehaviour
     {
         if (!_slots.Any(x => x.Value == true))
         {
-            _height += deltaY;
+            _height += _deltaY;
             _slots = GetSlotsForLevel(_height);
         }
 
@@ -96,15 +97,15 @@ public class Stack : MonoBehaviour
     {
         return new Dictionary<Vector3, bool>()
         {
-            { new Vector3(-deltaX - spaceBetweenX, height, deltaZ + spaceBetweenZ), true },
-            { new Vector3(0f, height, deltaZ + spaceBetweenZ), true },
-            { new Vector3(deltaX + spaceBetweenX, height, deltaZ + spaceBetweenZ), true },
-            { new Vector3(-deltaX - spaceBetweenX, height, 0), true },
+            { new Vector3(-_deltaX - _spaceBetweenX, height, _deltaZ + _spaceBetweenZ), true },
+            { new Vector3(0f, height, _deltaZ + _spaceBetweenZ), true },
+            { new Vector3(_deltaX + _spaceBetweenX, height, _deltaZ + _spaceBetweenZ), true },
+            { new Vector3(-_deltaX - _spaceBetweenX, height, 0), true },
             { new Vector3(0f, height, 0), false },
-            { new Vector3(deltaX + spaceBetweenX, height, 0), true },
-            { new Vector3(-deltaX - spaceBetweenX, height, -deltaZ - spaceBetweenZ), true },
-            { new Vector3(0f, height, -deltaZ - spaceBetweenZ), true },
-            { new Vector3(deltaX + spaceBetweenX, height, -deltaZ - spaceBetweenZ), true },
+            { new Vector3(_deltaX + _spaceBetweenX, height, 0), true },
+            { new Vector3(-_deltaX - _spaceBetweenX, height, -_deltaZ - _spaceBetweenZ), true },
+            { new Vector3(0f, height, -_deltaZ - _spaceBetweenZ), true },
+            { new Vector3(_deltaX + _spaceBetweenX, height, -_deltaZ - _spaceBetweenZ), true },
         };
     }
 }

@@ -6,14 +6,14 @@ using DG.Tweening;
 
 public class BedPart : MonoBehaviour
 {
-    [SerializeField] private float growthTime = 10;
+    [SerializeField] private float _growthTime = 10;
 
     [Header("Stages of growth from min to max")]
-    [SerializeField] private List<Transform> growthStages;
+    [SerializeField] private List<Transform> _growthStages;
 
-    [SerializeField] private Block blockPrefab;
+    [SerializeField] private Block _blockPrefab;
 
-    [SerializeField] private ParticleSystem particle;
+    [SerializeField] private ParticleSystem _particle;
 
     private List<Transform> _partsOfFinalStage;
     private bool _isGrown;
@@ -21,8 +21,8 @@ public class BedPart : MonoBehaviour
 
     private void Start()
     {
-        _partsOfFinalStage = GetChildrenFromStage(growthStages.Last());
-        _timeForOnePartGrow = growthTime / growthStages.Count;
+        _partsOfFinalStage = GetChildrenFromStage(_growthStages.Last());
+        _timeForOnePartGrow = _growthTime / _growthStages.Count;
 
         Initialize();
     }
@@ -39,10 +39,15 @@ public class BedPart : MonoBehaviour
         }
     }
 
+    public bool IsGrown()
+    {
+        return _isGrown;
+    }
+
     private void Initialize()
     {
-        growthStages.ForEach(x => x.gameObject.SetActive(false));
-        growthStages.Last().gameObject.SetActive(true);
+        _growthStages.ForEach(x => x.gameObject.SetActive(false));
+        _growthStages.Last().gameObject.SetActive(true);
         _isGrown = true;
 
         _partsOfFinalStage.ForEach(x => x.gameObject.SetActive(true));
@@ -50,7 +55,7 @@ public class BedPart : MonoBehaviour
 
     private void CreateBlock()
     {
-        var block = Instantiate(blockPrefab, transform.position, Quaternion.identity);
+        var block = Instantiate(_blockPrefab, transform.position, Quaternion.identity);
         block.transform.SetParent(transform);
         block.transform.DOLocalMove(Vector3.up, 0.5f);
 
@@ -83,20 +88,22 @@ public class BedPart : MonoBehaviour
 
     IEnumerator PlayParticle()
     {
-        particle.gameObject.SetActive(true);
-        particle.Play();
+        _particle.gameObject.SetActive(true);
+        _particle.Play();
+
         yield return new WaitForSeconds(0.5f);
-        particle.Stop();
+
+        _particle.Stop();
     }
 
     IEnumerator Grow()
     {
-        for (var i = 0; i < growthStages.Count; i++)
+        for (var i = 0; i < _growthStages.Count; i++)
         {
             yield return new WaitForSeconds(_timeForOnePartGrow);
 
-            growthStages[i].gameObject.SetActive(true);
-            if (i != 0) growthStages[i - 1].gameObject.SetActive(false);
+            _growthStages[i].gameObject.SetActive(true);
+            if (i != 0) _growthStages[i - 1].gameObject.SetActive(false);
         }
 
         _partsOfFinalStage.ForEach(x => x.gameObject.SetActive(true));

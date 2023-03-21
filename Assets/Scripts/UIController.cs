@@ -12,11 +12,10 @@ public class UIController : MonoBehaviour
     [SerializeField] private TMP_Text _blocksText;
     [SerializeField] private Scrollbar _scrollbar;
 
-    [SerializeField] private RectTransform _uiparticle;
-    [SerializeField] private ParticleSystem _particleSystem;
     [SerializeField] private Camera _camera;
 
-    [SerializeField] private RectTransform _canvas;
+    [SerializeField] private RectTransform _uiparticle;
+    private ParticleSystem _particleSystem;
 
     private bool _coinCoroutineIsStarted = false;
     private int _coins = 0;
@@ -35,13 +34,17 @@ public class UIController : MonoBehaviour
         EventManager.StopListening(GameEvent.START_PARTICLE, OnStartParticle);
     }
 
+    private void Start()
+    {
+        _particleSystem = _uiparticle.GetComponentInChildren<ParticleSystem>();
+    }
+
     private void OnAddBlockToStack(int blockInStackCount, int maxBlockCount)
     {
         _blocksText.text = blockInStackCount + "/" + maxBlockCount;
         _scrollbar.size = (float) blockInStackCount / maxBlockCount;
     }
 
-    // remove coins to add
     private void OnAddMoney(int coins, int maxBlockCount, float time)
     {
         _coins = coins;

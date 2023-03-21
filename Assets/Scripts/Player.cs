@@ -82,7 +82,6 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // add try get component
         if (other.gameObject.tag == "Block")
         {
             var block = other.GetComponent<Block>();
@@ -99,8 +98,17 @@ public class Player : MonoBehaviour
     {
         if (other.gameObject.tag == "GardenBed")
         {
-            _scythe.gameObject.SetActive(true);
-            _animator.SetBool("IsMowing", true);
+            var gardenBed = other.GetComponent<GardenBed>();
+            if (gardenBed.CultureGrown)
+            {
+                _scythe.gameObject.SetActive(true);
+                _animator.SetBool("IsMowing", true);
+            }
+            else
+            {
+                _scythe.gameObject.SetActive(false);
+                _animator.SetBool("IsMowing", false);
+            }
         }
     }
 
