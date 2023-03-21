@@ -5,13 +5,15 @@ using UnityEngine.Events;
 
 [System.Serializable]
 public class TypedEvent : UnityEvent<int, int> { }
-public class TypedEvent2 : UnityEvent<int, int, int, float> { }
+public class TypedEvent2 : UnityEvent<int, int, float> { }
+public class TypedEvent3 : UnityEvent<Vector3, int, float> { }
 
 public class EventManager : MonoBehaviour
 {
     private Dictionary<string, UnityEvent> eventDictionary;
     private Dictionary<string, TypedEvent> typedEventDictionary;
     private Dictionary<string, TypedEvent2> typedEvent2Dictionary;
+    private Dictionary<string, TypedEvent3> typedEvent3Dictionary;
 
     private static EventManager eventManager;
 
@@ -44,6 +46,7 @@ public class EventManager : MonoBehaviour
             eventDictionary = new Dictionary<string, UnityEvent>();
             typedEventDictionary = new Dictionary<string, TypedEvent>();
             typedEvent2Dictionary = new Dictionary<string, TypedEvent2>();
+            typedEvent3Dictionary = new Dictionary<string, TypedEvent3>();
         }
     }
 
@@ -115,7 +118,7 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void StartListening(string eventName, UnityAction<int, int, int, float> listener)
+    public static void StartListening(string eventName, UnityAction<int, int, float> listener)
     {
         TypedEvent2 thisEvent = null;
         if (instance.typedEvent2Dictionary.TryGetValue(eventName, out thisEvent))
@@ -130,7 +133,7 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void StopListening(string eventName, UnityAction<int, int, int, float> listener)
+    public static void StopListening(string eventName, UnityAction<int, int, float> listener)
     {
         if (eventManager == null) return;
         TypedEvent2 thisEvent = null;
@@ -140,12 +143,46 @@ public class EventManager : MonoBehaviour
         }
     }
 
-    public static void TriggerEvent(string eventName, int data1, int data2, int data3, float data4)
+    public static void TriggerEvent(string eventName, int data1, int data2, float data3)
     {
         TypedEvent2 thisEvent = null;
         if (instance.typedEvent2Dictionary.TryGetValue(eventName, out thisEvent))
         {
-            thisEvent.Invoke(data1, data2, data3, data4);
+            thisEvent.Invoke(data1, data2, data3);
+        }
+    }
+
+    public static void StartListening(string eventName, UnityAction<Vector3, int, float> listener)
+    {
+        TypedEvent3 thisEvent = null;
+        if (instance.typedEvent3Dictionary.TryGetValue(eventName, out thisEvent))
+        {
+            thisEvent.AddListener(listener);
+        }
+        else
+        {
+            thisEvent = new TypedEvent3();
+            thisEvent.AddListener(listener);
+            instance.typedEvent3Dictionary.Add(eventName, thisEvent);
+        }
+    }
+
+    public static void StopListening(string eventName, UnityAction<Vector3, int, float> listener)
+    {
+        if (eventManager == null) return;
+        TypedEvent3 thisEvent = null;
+        if (instance.typedEvent3Dictionary.TryGetValue(eventName, out thisEvent))
+        {
+            thisEvent.RemoveListener(listener);
+        }
+    }
+
+    public static void TriggerEvent(string eventName, Vector3 data1, int data2, float data3)
+    {
+        TypedEvent3 thisEvent = null;
+        if (instance.typedEvent3Dictionary.TryGetValue(eventName, out thisEvent))
+        {
+            thisEvent.Invoke(data1, data2, data3);
         }
     }
 }

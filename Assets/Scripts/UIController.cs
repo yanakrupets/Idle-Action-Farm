@@ -12,16 +12,27 @@ public class UIController : MonoBehaviour
     [SerializeField] private TMP_Text _blocksText;
     [SerializeField] private Scrollbar _scrollbar;
 
+    [SerializeField] private RectTransform _uiparticle;
+    [SerializeField] private ParticleSystem _particleSystem;
+    [SerializeField] private Camera _camera;
+
+    [SerializeField] private RectTransform _canvas;
+
+    private bool _coinCoroutineIsStarted = false;
+    private int _coins = 0;
+
     void Awake()
     {
         EventManager.StartListening(GameEvent.BLOCK_TO_STACK, OnAddBlockToStack);
         EventManager.StartListening(GameEvent.ADD_MONEY, OnAddMoney);
+        EventManager.StartListening(GameEvent.START_PARTICLE, OnStartParticle);
     }
 
     void OnDestroy()
     {
         EventManager.StopListening(GameEvent.BLOCK_TO_STACK, OnAddBlockToStack);
         EventManager.StopListening(GameEvent.ADD_MONEY, OnAddMoney);
+        EventManager.StopListening(GameEvent.START_PARTICLE, OnStartParticle);
     }
 
     private void OnAddBlockToStack(int blockInStackCount, int maxBlockCount)
@@ -30,12 +41,38 @@ public class UIController : MonoBehaviour
         _scrollbar.size = (float) blockInStackCount / maxBlockCount;
     }
 
-    private void OnAddMoney(int coinsToAdd, int blocksCount, int maxBlockCount, float time)
+    // remove coins to add
+    private void OnAddMoney(int coins, int maxBlockCount, float time)
     {
-        StartCoroutine(Coins(coinsToAdd));
-        // шото для полета монеток
+        _coins = coins;
 
         StartCoroutine(BarToZero(maxBlockCount, time));
+    }
+
+    private void OnStartParticle(Vector3 position, int blocksCount, float time)
+    {
+        StartCoinsParticle(position, blocksCount, time);
+    }
+
+    private void StartCoinsParticle(Vector3 position, int particleCount, float time)
+    {
+        var main = _particleSystem.main;
+
+        main.maxParticles = particleCount;
+        main.duration = time * 25;
+
+        _uiparticle.transform.position = _camera.WorldToScreenPoint(position);
+
+        _particleSystem.Play();
+    }
+
+    public void AttachedCoin()
+    {
+        if (!_coinCoroutineIsStarted)
+        {
+            _coinCoroutineIsStarted = true;
+            StartCoroutine(Coins(_coins));
+        }
     }
 
     IEnumerator Coins(int coins)
@@ -49,6 +86,8 @@ public class UIController : MonoBehaviour
 
             yield return new WaitForSeconds(time);
         }
+
+        _coinCoroutineIsStarted = false;
     }
 
     IEnumerator BarToZero(int maxBlockCount, float time)

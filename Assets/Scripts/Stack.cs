@@ -53,8 +53,10 @@ public class Stack : MonoBehaviour
             coins += block.Cost;
         }
 
-        EventManager.TriggerEvent(GameEvent.ADD_MONEY, coins, _blocksInStack.Count, _maxBlockCount, timeForMovingToBarn);
+        EventManager.TriggerEvent(GameEvent.ADD_MONEY, coins, _maxBlockCount, timeForMovingToBarn);
         Coins += coins;
+
+        EventManager.TriggerEvent(GameEvent.START_PARTICLE, barn.position, _blocksInStack.Count, timeForMovingToBarn);
 
         StartCoroutine(MoveBlocksToBarn(barn));
 
