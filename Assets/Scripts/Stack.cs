@@ -14,7 +14,7 @@ public class Stack : MonoBehaviour
     [SerializeField] private float _deltaZ = 0.2f;
     [SerializeField] private float _deltaY = 0.18f;
 
-    [SerializeField] private float _timeForMovingToBarn = 10f;
+    [SerializeField] private float _timeForMovingToBarn = 0.05f;
 
     private float _height;
     private List<Block> _blocksInStack;
@@ -34,7 +34,7 @@ public class Stack : MonoBehaviour
 
     public void AddBlock(Block block)
     {
-        if (_blocksInStack.Count < _maxBlockCount && block.isAvailable)
+        if (_blocksInStack.Count < _maxBlockCount && block.IsAvailable)
         {
             block.transform.SetParent(transform);
 

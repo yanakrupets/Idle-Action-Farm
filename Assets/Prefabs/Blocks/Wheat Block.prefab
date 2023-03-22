@@ -108,6 +108,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 267ae076835e41c49b6c05f7642901e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isAvailable: 1
-  _scaleForStack: {x: 0.4, y: 0.16, z: 0.2}
+  _cost: 10
   _cost: 10
