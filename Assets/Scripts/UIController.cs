@@ -62,10 +62,12 @@ public class UIController : MonoBehaviour
         var main = _particleSystem.main;
 
         main.maxParticles = particleCount;
-        main.duration = time * 25;
+        //main.duration = time * 25;
+        Debug.Log(main.duration);
 
         _uiparticle.transform.position = _camera.WorldToScreenPoint(position);
 
+        _particleSystem.gameObject.SetActive(true);
         _particleSystem.Play();
     }
 
