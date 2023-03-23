@@ -7280,6 +7280,7 @@ MonoBehaviour:
   _scrollbar: {fileID: 958292930}
   _camera: {fileID: 963194227}
   _uiparticle: {fileID: 340536688}
+  _attractor: {fileID: 243711551}
 --- !u!1 &1822270627
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using Coffee.UIExtensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private Camera _camera;
 
     [SerializeField] private RectTransform _uiparticle;
+    [SerializeField] private UIParticleAttractor _attractor;
     private ParticleSystem _particleSystem;
 
     private bool _coinCoroutineIsStarted = false;
@@ -68,6 +70,8 @@ public class UIController : MonoBehaviour
 
     private void StartCoinsParticle(Vector3 position, int particleCount, float time)
     {
+        _attractor.maxSpeed = time * 25;
+
         var main = _particleSystem.main;
 
         main.maxParticles = particleCount;
@@ -76,7 +80,7 @@ public class UIController : MonoBehaviour
         if (screenPoint.x < 0) screenPoint.x = 0;
         _uiparticle.transform.position = screenPoint;
 
-        _particleSystem.Play();
+        StartCoroutine(CoinParticle(time));
     }
 
     public void AttractedCoin()
@@ -87,6 +91,12 @@ public class UIController : MonoBehaviour
             _coinCoroutineIsStarted = true;
             StartCoroutine(Coins(_coins));
         }
+    }
+
+    IEnumerator CoinParticle(float time)
+    {
+        yield return new WaitForSeconds(time * 10);
+        _particleSystem.Play();
     }
 
     IEnumerator Coins(int coins)
