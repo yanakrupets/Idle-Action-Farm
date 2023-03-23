@@ -609,14 +609,14 @@ MonoBehaviour:
   m_ParticleSystem: {fileID: 1543157835}
   m_DestinationRadius: 0.1
   m_DelayRate: 0
-  m_MaxSpeed: 1
+  m_MaxSpeed: 3
   m_Movement: 0
   m_OnAttracted:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1753125217}
         m_TargetAssemblyTypeName: UIController, Assembly-CSharp
-        m_MethodName: AttachedCoin
+        m_MethodName: AttractedCoin
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2800,7 +2800,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 40
+    maxNumParticles: 5
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -3065,7 +3065,7 @@ ParticleSystem:
     rateOverTime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 20
+      scalar: 40
       minScalar: 10
       maxCurve:
         serializedVersion: 2

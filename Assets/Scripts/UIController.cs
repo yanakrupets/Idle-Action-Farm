@@ -19,6 +19,7 @@ public class UIController : MonoBehaviour
 
     private bool _coinCoroutineIsStarted = false;
     private int _coins = 0;
+    private bool _isCoinsAttracted = false;
 
     void Awake()
     {
@@ -37,6 +38,14 @@ public class UIController : MonoBehaviour
     private void Start()
     {
         _particleSystem = _uiparticle.GetComponentInChildren<ParticleSystem>();
+    }
+
+    private void Update()
+    {
+        if (_isCoinsAttracted)
+        {
+            _particleSystem.Stop();
+        }
     }
 
     private void OnAddBlockToStack(int blockInStackCount, int maxBlockCount)
@@ -67,12 +76,12 @@ public class UIController : MonoBehaviour
         if (screenPoint.x < 0) screenPoint.x = 0;
         _uiparticle.transform.position = screenPoint;
 
-        _particleSystem.gameObject.SetActive(true);
         _particleSystem.Play();
     }
 
-    public void AttachedCoin()
+    public void AttractedCoin()
     {
+        _isCoinsAttracted = true;
         if (!_coinCoroutineIsStarted)
         {
             _coinCoroutineIsStarted = true;
@@ -92,6 +101,7 @@ public class UIController : MonoBehaviour
             yield return new WaitForSeconds(time);
         }
 
+        _isCoinsAttracted = false;
         _coinCoroutineIsStarted = false;
     }
 
